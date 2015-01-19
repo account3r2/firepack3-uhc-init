@@ -31,11 +31,9 @@ function init()
 	-- It should also have a start button to run the start function.
 end
 
---[[
 function toTeam(colour)
 	runCommand("scoreboard teams join colour @p");
 end
-]]
 
 function setTime()
 	runCommand("difficulty 0");
@@ -53,6 +51,7 @@ function startGame()
 	rs.setOutput("left", true)
 	setTime();
 	spreadPlayers();
+	runCommand("say The game has started! No killing in the first 20 minutes!");
 end
 
 init();
