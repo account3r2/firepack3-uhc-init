@@ -1,13 +1,58 @@
 local commandBlock = peripheral.find("command");
 
 function runCommand(string)
-	 commandBlock.setCommand(string);
-	 commandBlock.runCommand();
+	commandBlock.setCommand(string);
+	commandBlock.runCommand();
 end
 
-function initTimeFix()
-	 runCommand("gamerule doDaylightCycle false");
-	 runCommand("time set 6000");
+function init()
+	rs.setOutput("right", false)
+	rs.setOutput("left", false)
+	runCommand("time set 18000");
+	runCommand("difficulty 3");
+	runCommand("scoreboard teams add red");
+	runCommand("scoreboard teams add green");
+	runCommand("scoreboard teams add blue");
+	runCommand("scoreboard teams add gold");
+	runCommand("scoreboard teams option red friendlyfire false");
+	runCommand("scoreboard teams option green friendlyfire false");
+	runCommand("scoreboard teams option blue friendlyfire false");
+	runCommand("scoreboard teams option gold friendlyfire false");
+	runCommand("scoreboard teams option red color red");
+	runCommand("scoreboard teams option green color green");
+	runCommand("scoreboard teams option blue color blue");
+	runCommand("scoreboard teams option gold color gold");
+	runCommand("scoreboard teams option red seeFriendlyInvisibles true");
+	runCommand("scoreboard teams option green seeFriendlyInvisibles true");
+	runCommand("scoreboard teams option blue seeFriendlyInvisibles true");
+	runCommand("scoreboard teams option gold seeFriendlyInvisibles true");
+	-- Do le Interface! DO IT!!!
+	-- The interface should allow players to click on a team colour (red, green, blue, or gold)
+	-- It should also have a start button to run the start function.
 end
 
-initTimeFix();
+--[[
+function toTeam(colour)
+	runCommand("scoreboard teams join colour @p");
+end
+]]
+
+function setTime()
+	runCommand("difficulty 0");
+	runCommand("gamerule doDaylightCycle false");
+	runCommand("time set 6000");
+	runCommand("difficulty 3");
+end
+
+function spreadPlayers()
+	runCommand("spreadplayers 0 0 700 1000 true @a");
+end
+
+function startGame()
+	rs.setOutput("right", true)
+	rs.setOutput("left", true)
+	setTime();
+	spreadPlayers();
+end
+
+init();
