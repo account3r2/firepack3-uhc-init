@@ -26,6 +26,11 @@ function init()
 	runCommand("scoreboard teams option green seeFriendlyInvisibles true");
 	runCommand("scoreboard teams option blue seeFriendlyInvisibles true");
 	runCommand("scoreboard teams option gold seeFriendlyInvisibles true");
+	runCommand("scoreboard objectives setdisplay sidebar");
+	runCommand("scoreboard objectives setdisplay list");
+	runCommand("scoreboard objectives setdisplay belowName");
+	runCommand("scoreboard objectives add Health health Health");
+	runCommand("scoreboard objectives setdisplay list Health");
 	-- Do le Interface! DO IT!!!
 	-- The interface should allow players to click on a team colour (red, green, blue, or gold)
 	-- It should also have a start button to run the start function.
