@@ -1,0 +1,13 @@
+local commandBlock = peripheral.find("command");
+
+function runCommand(string)
+	 commandBlock.setCommand(string);
+	 commandBlock.runCommand();
+end
+
+function initTimeFix()
+	 runCommand("gamerule doDaylightCycle false");
+	 runCommand("time set 6000");
+end
+
+initTimeFix();
