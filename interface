@@ -1,0 +1,111 @@
+os.loadAPI("libtouch");
+
+local mon = peripheral.find("monitor");
+
+libtouch.registerMonitor(mon);
+
+libtouch.addButton(9, 3, 3, colors.blue, colors.lightBlue,
+  "Blue", "blue");
+
+libtouch.addButton(9, 7, 3, colors.red, colors.pink,
+  "Red", "red");
+
+libtouch.addButton(16, 3, 3, colors.yellow, colors.white,
+  "Gold", "gold");
+
+libtouch.addButton(15, 7, 3, colors.green, colors.lime,
+  "Green", "green");
+
+libtouch.addButton(1, 12, 1, colors.gray, colors.lightGray,
+  "Leave", "leave");
+
+libtouch.addButton(23, 12, 1, colors.green, colors.lime,
+  "Start", "start");
+
+libtouch.addButton(10, 7, 3, colors.green, colors.lime,
+  "Yes", "yes");
+
+libtouch.addButton(16, 7, 3, colors.red, colors.pink,
+  "No ", "no");
+
+function confirmPrompt(s)
+  mon.clear();
+
+  local w, h = mon.getSize();
+  mon.setCursorPos(((w / 2) - (#s / 2)) + 1, 5);
+  mon.write(s);
+
+  libtouch.showButton("yes");
+  libtouch.showButton("no");
+
+
+  local res;
+  repeat
+    res = libtouch.getButtonPress();
+  until res
+
+  libtouch.hideButton("yes");
+  libtouch.hideButton("no");
+
+  mon.clear();
+
+  return res == "yes";
+end
+
+function addToTeam(team)
+  print("Added to team "..team);
+end
+
+function confirmJoinTeam(team)
+  local res = confirmPrompt("Join "
+    ..string.gsub(team, "^%l", string.upper).." Team?");
+
+  if res then
+    addToTeam(team);
+  end
+end
+
+function removeFromTeam()
+  print("Removed from team");
+end
+
+function startGame()
+  print("Started game");
+end
+
+while true do
+  mon.clear();
+
+  local text = "Choose Team To Join";
+  local w, h = mon.getSize();
+  mon.setCursorPos((w / 2) - (#text / 2) + 1, 1);
+  mon.write(text);
+
+  libtouch.showButton("blue");
+  libtouch.showButton("red");
+  libtouch.showButton("green");
+  libtouch.showButton("gold");
+  libtouch.showButton("leave");
+  libtouch.showButton("start");
+
+  local res = libtouch.getButtonPress();
+
+  libtouch.hideButton("blue");
+  libtouch.hideButton("red");
+  libtouch.hideButton("green");
+  libtouch.hideButton("gold");
+  libtouch.showButton("leave");
+  libtouch.showButton("start");
+
+  if res == "leave" then
+    if confirmPrompt("Leave current team?") then
+      removeFromTeam();
+    end
+  elseif res == "start" then
+    if confirmPrompt("Really start game?") then
+      startGame();
+    end
+  elseif res then
+    confirmJoinTeam(res);
+  end
+end
