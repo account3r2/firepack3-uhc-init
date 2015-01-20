@@ -56,6 +56,11 @@ function startGame()
 	rs.setOutput("left", true)
 	setTime();
 	spreadPlayers();
+	runCommand("gamemode 0 @a");
+	runCommand("effect @a 6 10 10 true");	-- Instant Health
+	runCommand("effect @a 10 10 10 true");	-- Regeneration
+	runCommand("effect @a 11 10 10 true");	-- Resistance
+	runCommand("effect @a 23 10 10 true");	-- Saturation 
 	runCommand("say The game has started! No killing in the first 20 minutes!");
 end
 
