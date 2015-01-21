@@ -135,6 +135,7 @@ function startGame()
 	runCommand("effect @a 23 15 10 true");	-- Saturation 
 	runCommand("say The game has started! No killing in the first 20 minutes!");
 	runCommand("spawnpoint @a 0 151 0");
+	runCommand("tp @a[team=] 0 151 0");
 	mon.clear();
 	local text = "(server)² UHC II"
 	local w, h = mon.getSize();
