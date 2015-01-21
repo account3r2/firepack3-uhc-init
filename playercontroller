@@ -5,15 +5,17 @@ function runCommand(command)
 	cmd.runCommand();
 end
 
+print("Player Controller Running.");
+
 while true do
 	while rs.getInput("top") do
-		runCommand("gamemode 2 @a[m=0,r=20]")
+		runCommand("gamemode 2 @a[m=0,r=20]");
 		sleep(0.5);
 	end
 	while not rs.getInput("top") do
-		runCommand("tp @a[m=0] 0 151 0")
+		runCommand("tp @a[m=0] 0 151 0");
 		sleep(0.125);
-		runCommand("gamemode 2 @a[m=0,r=20]")
+		runCommand("gamemode 2 @a[m=0,r=20]");
 		sleep(0.125);
 	end
 end

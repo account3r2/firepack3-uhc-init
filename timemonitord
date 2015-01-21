@@ -5,10 +5,11 @@ function run_command(c)
 	cmd.runCommand();
 end
 
-local timer = 0;
+timer = 0;
 
 while true do
 	while rs.getInput("top") do
+		print("New iteration. Timer is at " .. timer .. " minutes.");
 		sleep(5 * 60);
 		timer = timer + 5;
 	  
@@ -20,7 +21,8 @@ while true do
 		end
 	end
 	if not rs.getInput("top") then
-		local timer = 0;
-		sleep(0.1);
+		timer = 0;
+		print("Reset timer to 0.");
+		sleep(0.5);
 	end
 end
