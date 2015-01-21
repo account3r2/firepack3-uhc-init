@@ -9,6 +9,8 @@ os.loadAPI("libtouch");
 
 local mon = peripheral.find("monitor");
 
+rainbow = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green, colors.cyan, colors.lightBlue, colors.blue, colors.purple, colors.magenta, colors.pink}
+
 function init()
 	runCommand("gamerule commandBlockOutput false");
 	runCommand("setworldspawn 0 151 0");
@@ -47,6 +49,20 @@ function init()
 	libtouch.addButton(23, 12, 1, colors.green, colors.lime, "Start", "start");
 	libtouch.addButton(10, 7, 3, colors.green, colors.lime, "Yes", "yes");
 	libtouch.addButton(16, 7, 3, colors.red, colors.pink, "No ", "no");
+end
+
+function idleScreen()
+	local text = "(server)² UHC II"
+	local w, h = mon.getSize();
+	while true do
+		for x=1,#rainbow,1 do
+			mon.clear();
+			mon.setTextColor(rainbow[x]);
+			mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
+			mon.write(text);
+			sleep(0.25);
+		end
+	end
 end
 
 function confirmPrompt(s)
@@ -184,67 +200,5 @@ while showInterface do
 	elseif res then
 		runCommand("playsound note.pling @p ~ ~ ~ 1 1 1");
 		confirmJoinTeam(res);
-	end
-end
-
-function idleScreen()
-	while true do
-		mon.clear();
-		mon.setTextColor(colors.red);
-		local text = "(server)² UHC II"
-		local w, h = mon.getSize();
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.orange);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.yellow);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.lime);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.green);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.cyan);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.lightBlue);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.blue);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.purple);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.magenta);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
-		mon.clear();
-		mon.setTextColor(colors.pink);
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		sleep(0.25);
 	end
 end
