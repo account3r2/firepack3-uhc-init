@@ -1,20 +1,26 @@
 local cmd = peripheral.find("command");
 
 function run_command(c)
-  cmd.setCommand(c);
-  cmd.runCommand();
+	cmd.setCommand(c);
+	cmd.runCommand();
 end
 
 local timer = 0;
 
 while true do
-  sleep(5 * 60);
-  timer = timer + 5;
-  
-  if timer % 20 ~= 0 then
-    run_command("say "..(20 - (timer % 20))..
-      " minutes left in Episode "..math.ceil(timer / 20));
-  else
-    run_command("say Episode "..(timer / 20).." has ended!");
-  end
-end  
+	while rs.getInput("top") do
+		sleep(5 * 60);
+		timer = timer + 5;
+	  
+		if timer % 20 ~= 0 then
+			run_command("say " .. (20 - (timer % 20)) .. " minutes left in Episode " .. math.ceil(timer / 20));
+		else
+			run_command("playsound fireworks.launch @a ~ ~ ~ 1 1 1");
+			run_command("say Episode " .. (timer / 20) .. " has ended!");
+		end
+	end
+	if not rs.getInput("top") then
+		local timer = 0;
+		sleep(0.1);
+	end
+end

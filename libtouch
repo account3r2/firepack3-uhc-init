@@ -3,74 +3,72 @@ local buttons = {};
 local mon;
 
 function addButton(x, y, h, pc, sc, txt, label)
-  buttons[label] = {
-    x = x,
-    y = y,
-    h = h,
-    pc = pc,
-    sc = sc,
-    text = txt,
-    show = false,
-  };
+	buttons[label] = {
+		x = x,
+		y = y,
+		h = h,
+		pc = pc,
+		sc = sc,
+		text = txt,
+		show = false,
+	};
 end
 
 function delButton(label)
-  buttons[label] = nil;
+	buttons[label] = nil;
 end
 
 function registerMonitor(m)
-  mon = m;
+	mon = m;
 end
 
 function hideButton(label)
-  local b = buttons[label];
+	local b = buttons[label];
 
-  mon.setBackgroundColor(colors.black);
+	mon.setBackgroundColor(colors.black);
 
-  mon.setCursorPos(b.x, b.y);
+	mon.setCursorPos(b.x, b.y);
 
-  for i = 1, b.h do
-    mon.write(string.rep(" ", #b.text + 2));
-    mon.setCursorPos(b.x, b.y + i);
-  end
+	for i = 1, b.h do
+		mon.write(string.rep(" ", #b.text + 2));
+		mon.setCursorPos(b.x, b.y + i);
+	end
 
-  b.show = false;
+	b.show = false;
 end
 
 function showButton(label, isClick)
-  local b = buttons[label];
+	local b = buttons[label];
 
-  mon.setCursorPos(b.x, b.y);
+	mon.setCursorPos(b.x, b.y);
 
-  mon.setTextColor(colors.white);
-  mon.setBackgroundColor(isClick and b.sc or b.pc);
+	mon.setTextColor(colors.white);
+	mon.setBackgroundColor(isClick and b.sc or b.pc);
 
-  for i = 1, b.h do
-    mon.write(string.rep(" ", #b.text + 2));
-    mon.setCursorPos(b.x, b.y + i);
-  end
+	for i = 1, b.h do
+		mon.write(string.rep(" ", #b.text + 2));
+		mon.setCursorPos(b.x, b.y + i);
+	end
 
-  mon.setCursorPos(b.x + 1, math.floor(b.y + (b.h / 2)));
-  mon.write(b.text);
+	mon.setCursorPos(b.x + 1, math.floor(b.y + (b.h / 2)));
+	mon.write(b.text);
 
-  mon.setBackgroundColor(colors.black);
+	mon.setBackgroundColor(colors.black);
 
-  b.show = true;
+	b.show = true;
 end
 
 function getButtonPress()
-  local _, _, x, y = os.pullEvent("monitor_touch");
+	local _, _, x, y = os.pullEvent("monitor_touch");
 
-  for k, b in pairs(buttons) do
-    if b.show and
-        (x <= b.x + (#b.text + 1) and x >= b.x) and
-	(y <= b.y + (b.h - 1) and y >= b.y) then
-      showButton(k, true);
-      sleep(0.125);
-      showButton(k);
-      return k;
-    end
-  end
+	for k, b in pairs(buttons) do
+		if b.show and (x <= b.x + (#b.text + 1) and x >= b.x) and (y <= b.y + (b.h - 1) and y >= b.y) then
+			showButton(k, true);
+			sleep(0.125);
+			showButton(k);
+			return k;
+		end
+	end
 
-  return nil;
+	return nil;
 end
