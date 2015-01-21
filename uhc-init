@@ -11,6 +11,82 @@ local mon = peripheral.find("monitor");
 
 rainbow = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green, colors.cyan, colors.lightBlue, colors.blue, colors.purple, colors.magenta, colors.pink}
 
+function generateBorder(worldSize)
+	mon.clear();
+	local text1 = "Generating Border..."
+	local text2 = "Done!"
+	local w, h = mon.getSize();
+	mon.setCursorPos(((w / 2) - (#text1 / 2)) + 1, 5);
+	mon.write(text1);
+	sleep(5);
+	for x=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		for y=0,256,10 do
+			runCommand("setblock " .. x .. " " .. y .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 1 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 2 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 3 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 4 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 5 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 6 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 7 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 8 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 9 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("tp @a[m=2] " .. x .. " 256.0 -" .. math.floor(worldSize / 2));
+			sleep(0.001);
+		end
+	end
+	for x=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		for y=0,256,10 do
+			runCommand("setblock " .. x .. " " .. y .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 1 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 2 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 3 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 4 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 5 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 6 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 7 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 8 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("setblock " .. x .. " " .. y + 9 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
+			runCommand("tp @a[m=2] " .. x .. " 256.0 " .. math.floor(worldSize / 2));
+			sleep(0.001);
+		end
+	end
+	for z=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		for y=0,256,10 do
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 1 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 2 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 3 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 4 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 5 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 6 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 7 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 8 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 9 .. " " .. z .. " minecraft:bedrock");
+			runCommand("tp @a[m=2] -" .. math.floor(worldSize / 2) .. " 256.0 " .. z);
+			sleep(0.001);
+		end
+	end
+	for z=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		for y=0,256,10 do
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 1 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 2 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 3 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 4 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 5 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 6 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 7 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 8 .. " " .. z .. " minecraft:bedrock");
+			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 9 .. " " .. z .. " minecraft:bedrock");
+			runCommand("tp @a[m=2] " .. math.floor(worldSize / 2) .. " 256.0 " .. z);
+			sleep(0.001);
+		end
+	end
+	mon.setCursorPos(((w / 2) - (#text2 / 2)) + 1, 6);
+	mon.write(text2);
+end
+
 function init()
 	runCommand("gamerule commandBlockOutput false");
 	runCommand("setworldspawn 0 151 0");
@@ -39,6 +115,7 @@ function init()
 	runCommand("scoreboard objectives setdisplay belowName");
 	runCommand("scoreboard objectives add Health health Health");
 	runCommand("scoreboard objectives setdisplay list Health");
+	generateBorder(2000);
 	showInterface = true
 	libtouch.registerMonitor(mon);
 	libtouch.addButton(9, 3, 3, colors.blue, colors.lightBlue, "Blue", "blue");
