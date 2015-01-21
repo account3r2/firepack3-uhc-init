@@ -20,6 +20,7 @@ function generateBorder(worldSize)
 	mon.write(text1);
 	sleep(5);
 	for x=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		runCommand("tp @a[m=2] " .. x - 1 .. " 256.0 -" .. math.floor(worldSize / 2));
 		for y=0,256,10 do
 			runCommand("setblock " .. x .. " " .. y .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
 			runCommand("setblock " .. x .. " " .. y + 1 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
@@ -31,11 +32,11 @@ function generateBorder(worldSize)
 			runCommand("setblock " .. x .. " " .. y + 7 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
 			runCommand("setblock " .. x .. " " .. y + 8 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
 			runCommand("setblock " .. x .. " " .. y + 9 .. " -" .. math.floor(worldSize / 2) .. " minecraft:bedrock");
-			runCommand("tp @a[m=2] " .. x .. " 256.0 -" .. math.floor(worldSize / 2));
 			sleep(0.001);
 		end
 	end
 	for x=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		runCommand("tp @a[m=2] " .. x - 1 .. " 256.0 " .. math.floor(worldSize / 2));
 		for y=0,256,10 do
 			runCommand("setblock " .. x .. " " .. y .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
 			runCommand("setblock " .. x .. " " .. y + 1 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
@@ -47,11 +48,11 @@ function generateBorder(worldSize)
 			runCommand("setblock " .. x .. " " .. y + 7 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
 			runCommand("setblock " .. x .. " " .. y + 8 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
 			runCommand("setblock " .. x .. " " .. y + 9 .. " " .. math.floor(worldSize / 2) .. " minecraft:bedrock");
-			runCommand("tp @a[m=2] " .. x .. " 256.0 " .. math.floor(worldSize / 2));
 			sleep(0.001);
 		end
 	end
 	for z=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		runCommand("tp @a[m=2] -" .. math.floor(worldSize / 2) .. " 256.0 " .. z - 1);
 		for y=0,256,10 do
 			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y .. " " .. z .. " minecraft:bedrock");
 			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 1 .. " " .. z .. " minecraft:bedrock");
@@ -63,11 +64,11 @@ function generateBorder(worldSize)
 			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 7 .. " " .. z .. " minecraft:bedrock");
 			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 8 .. " " .. z .. " minecraft:bedrock");
 			runCommand("setblock -" .. math.floor(worldSize / 2) .. " " .. y + 9 .. " " .. z .. " minecraft:bedrock");
-			runCommand("tp @a[m=2] -" .. math.floor(worldSize / 2) .. " 256.0 " .. z);
 			sleep(0.001);
 		end
 	end
 	for z=-math.floor(worldSize / 2),math.floor(worldSize / 2),1 do
+		runCommand("tp @a[m=2] " .. math.floor(worldSize / 2) .. " 256.0 " .. z - 1);
 		for y=0,256,10 do
 			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y .. " " .. z .. " minecraft:bedrock");
 			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 1 .. " " .. z .. " minecraft:bedrock");
@@ -79,7 +80,6 @@ function generateBorder(worldSize)
 			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 7 .. " " .. z .. " minecraft:bedrock");
 			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 8 .. " " .. z .. " minecraft:bedrock");
 			runCommand("setblock " .. math.floor(worldSize / 2) .. " " .. y + 9 .. " " .. z .. " minecraft:bedrock");
-			runCommand("tp @a[m=2] " .. math.floor(worldSize / 2) .. " 256.0 " .. z);
 			sleep(0.001);
 		end
 	end
@@ -166,19 +166,11 @@ function confirmPrompt(s)
 	return res == "yes";
 end
 
-function addToTeam(team)
-	runCommand("scoreboard teams join " .. team .. " @p");
-end
-
-function removeFromTeam()
-	runCommand("scoreboard teams leave @p");
-end
-
 function confirmJoinTeam(team)
 	local res = confirmPrompt("Join " .. string.gsub(team, "^%l", string.upper) .. " Team?");
 	if res then
 		runCommand("playsound note.pling @p ~ ~ ~ 1 2 1");
-		addToTeam(team);
+		runCommand("scoreboard teams join " .. team .. " @p");
 	else
 		runCommand("playsound note.pling @p ~ ~ ~ 1 0.5 1");
 	end
@@ -262,7 +254,7 @@ while showInterface do
 		runCommand("playsound note.pling @p ~ ~ ~ 1 1 1");
 		if confirmPrompt("Leave current team?") then
 			runCommand("playsound note.pling @p ~ ~ ~ 1 2 1");
-			removeFromTeam();
+			runCommand("scoreboard teams leave @p");
 		else
 			runCommand("playsound note.pling @p ~ ~ ~ 1 0.5 1");
 		end
