@@ -9,7 +9,7 @@ function uhcMessage(message)
 end
 
 while true do
-	if rs.getInput("left") then
+	if rs.getInput("right") then
 		print("Timer is at " .. timer .. " minutes.");
 		sleep(5 * 60);
 		timer = timer + 5;
