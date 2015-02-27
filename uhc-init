@@ -63,6 +63,7 @@ function initWorldRules()
 	print("Initializing gamerules...");
 	commands.exec("gamerule commandBlockOutput false");
 	commands.exec("gamerule doDaylightCycle false");
+	commands.exec("gamerule naturalRegeneration false");
 	commands.exec("setworldspawn 0 151 0");
 	commands.exec("time set 18000");
 	commands.exec("difficulty 3");
@@ -79,7 +80,7 @@ function drawProgress(current, maximum)
 	mon.write(percent);
 end
 
-function generateWorld(worldSize)		-- commands.getBlockInfo(x, y, z) = table blockInfo
+function generateWorld(worldSize)
 	print("Generating world...");
 
 	local minx = -math.floor(worldSize / 2);
@@ -90,7 +91,13 @@ function generateWorld(worldSize)		-- commands.getBlockInfo(x, y, z) = table blo
 	generateOn = {};
 	generateOn.x = minx - 16;
 
-	for x = 0, maxx, 1 do
+	-- if rs.getInput("right") then
+		-- generateOn.x = math.floor((rs.getAnalogueInput("right") * maxx) / 15) - 16;
+		-- print("World generation stopped by user.");
+	-- end
+
+	for x = (rs.getInput("right") and (math.floor((rs.getAnalogueInput("right") * maxx) / 15)) - 16) or 0, maxx, 1 do
+		drawProgress(x, maxx);
 		generateOn.x = generateOn.x + 16;
 		generateOn.z = minz - 16;
 		for z = 0, maxz, 1 do
@@ -101,7 +108,6 @@ function generateWorld(worldSize)		-- commands.getBlockInfo(x, y, z) = table blo
 			generateOn.z = generateOn.z + 16;
 			local blockInfo = commands.getBlockInfo(generateOn.x, 255, generateOn.z);
 		end
-		drawProgress(x, maxx);
 		sleep(0.0125);
 	end
 
