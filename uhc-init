@@ -1,326 +1,80 @@
-worldDiameter = 4000;
+local worldDiameter = 4000;
+
+local uhc = dofile("libuhccore");
+uhc.interface = dofile("libuhcinterface");
 
 local commandBlock = peripheral.find("command");
-
-function runCommandBlock(string)
-	commandBlock.setCommand(string);
-	commandBlock.runCommand();
-end
-
-os.loadAPI("libtouch");
-
 local mon = peripheral.find("monitor");
 
-function uhcMessageRaw(rawMessage)
-	commands.exec("tellraw @a {\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{\"text\":\"UHC\",\"color\":\"yellow\",\"extra\":[{\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{" .. rawMessage .. "}]}]}]}");
-end
-
-function uhcMessage(message)
-	uhcMessageRaw("\"text\":\"" .. message .. "\",\"color\":\"yellow\"");
-end
-
-rainbow = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green, colors.cyan, colors.lightBlue, colors.blue, colors.purple, colors.magenta, colors.pink}
-
-function initTeams()
-	print("Initializing teams...");
-	commands.exec("scoreboard teams leave @a");
-	commands.exec("scoreboard teams add red");
-	commands.exec("scoreboard teams add green");
-	commands.exec("scoreboard teams add blue");
-	commands.exec("scoreboard teams add gold");
-	commands.exec("scoreboard teams option red friendlyfire false");
-	commands.exec("scoreboard teams option green friendlyfire false");
-	commands.exec("scoreboard teams option blue friendlyfire false");
-	commands.exec("scoreboard teams option gold friendlyfire false");
-	commands.exec("scoreboard teams option red color red");
-	commands.exec("scoreboard teams option green color green");
-	commands.exec("scoreboard teams option blue color blue");
-	commands.exec("scoreboard teams option gold color gold");
-	commands.exec("scoreboard teams option red seeFriendlyInvisibles true");
-	commands.exec("scoreboard teams option green seeFriendlyInvisibles true");
-	commands.exec("scoreboard teams option blue seeFriendlyInvisibles true");
-	commands.exec("scoreboard teams option gold seeFriendlyInvisibles true");
-	commands.exec("scoreboard objectives setdisplay sidebar");
-	commands.exec("scoreboard objectives setdisplay list");
-	commands.exec("scoreboard objectives setdisplay belowName");
-	commands.exec("scoreboard objectives add Health health Health");
-	commands.exec("scoreboard objectives setdisplay list Health");
-end
-
-function initInterface()
-	print("Initializing the interface...");
-	libtouch.registerMonitor(mon);
-	libtouch.addButton(9, 3, 3, colors.blue, colors.lightBlue, "Blue", "blue");
-	libtouch.addButton(9, 7, 3, colors.red, colors.pink, "Red", "red");
-	libtouch.addButton(16, 3, 3, colors.yellow, colors.white, "Gold", "gold");
-	libtouch.addButton(15, 7, 3, colors.green, colors.lime, "Green", "green");
-	libtouch.addButton(1, 12, 1, colors.gray, colors.lightGray, "Leave", "leave");
-	libtouch.addButton(23, 12, 1, colors.green, colors.lime, "Start", "start");
-	libtouch.addButton(10, 7, 3, colors.green, colors.lime, "Yes", "yes");
-	libtouch.addButton(16, 7, 3, colors.red, colors.pink, "No ", "no");
-	showInterface = true;
-end
-
-function initWorldRules()
-	print("Initializing gamerules...");
-	commands.exec("gamerule commandBlockOutput false");
-	commands.exec("gamerule doDaylightCycle false");
-	commands.exec("gamerule naturalRegeneration false");
-	commands.exec("setworldspawn 0 151 0");
-	commands.exec("time set 18000");
-	commands.exec("difficulty 3");
-end
-
-function drawProgress(current, maximum)
-	mon.clear();
-	mon.setTextScale(3);
-
-	local percent = tostring(math.floor(100 * (current / maximum))) .. "%"
-
-	local w, h = mon.getSize();
-	mon.setCursorPos((w / 2) - (#percent / 2) + 1, (h / 2));
-	mon.write(percent);
-end
-
-function generateWorld(worldSize)
-	print("Generating world...");
-
-	local minx = -math.floor(worldSize / 2);
-	local maxx = math.ceil(worldSize / 16);
-	local minz = -math.floor(worldSize / 2);
-	local maxz = math.ceil(worldSize / 16);
-
-	generateOn = {};
-	generateOn.x = minx - 16;
-
-	for x = (rs.getInput("right") and (math.floor((rs.getAnalogueInput("right") * maxx) / 15)) - 16) or 0, maxx, 1 do
-		drawProgress(x, maxx);
-		generateOn.x = generateOn.x + 16;
-		generateOn.z = minz - 16;
-		for z = 0, maxz, 1 do
-			if rs.getInput("top") then
-				print("World generation stopped by user.");
-				return;
-			end
-			generateOn.z = generateOn.z + 16;
-			local blockInfo = commands.getBlockInfo(generateOn.x, 255, generateOn.z);
-		end
-		sleep(0.0125);
-	end
-
-	generateOn = nil;
-end
-
-function generateBorder(worldSize)
-	print("Generating world border...");
-	local pos1 = "-" .. tostring(math.floor(worldSize / 2)) .. ",0,-" .. tostring(math.floor(worldSize / 2));
-	local pos2 = tostring(math.floor(worldSize / 2)) .. ",255," .. tostring(math.floor(worldSize / 2));
-	for i = 0, 255, 1 do
-		drawProgress(i, 255);
-		if rs.getInput("front") then
-			print("World border generation stopped by user.");
-			return;
-		end
-		commands.exec("//pos1 -" .. tostring(math.floor(worldSize / 2)) .. "," .. i .. ",-" .. tostring(math.floor(worldSize / 2)));
-		commands.exec("//pos2 " .. tostring(math.floor(worldSize / 2)) .. "," .. i .. "," .. tostring(math.floor(worldSize / 2)));
-		commands.exec("//walls minecraft:bedrock");
-		sleep(0.125)
-	end
-end
-
-function init()
+local function init()
 	print("Initializing...");
-	uhcMessage("Initializing UHC... This may take a few minutes.");
+	uhc.say("Initializing UHC... This may take a few minutes.");
 
-	initTeams();
-	initInterface();
-	initWorldRules();
-	if not rs.getInput("top") then
-		generateWorld(worldDiameter);
-	else
-		print("World generation blocked by user.");
-	end
+	print("Initializing the interface...");
+	uhc.interface.init(mon);
 
-	if not rs.getInput("front") then
-		generateBorder(worldDiameter);
-	else
-		print("World border generation blocked by user.");
-	end
+	print("Initializing gamerules...");
+	uhc.gamerule.init();
+	uhc.gamerule.eternalNight(true);
+	uhc.gamerule.difficultyCycle(3);
+	uhc.setSpawn(0, 151, 0);
+
+	print("Initializing teams...");
+	uhc.teams.init();
+	uhc.teams.friendlyFire(false);
+	uhc.teams.seeTeamInvisibles(true);
+	uhc.teams.seeNametags(true);
+
+	print("Initializing scoreboard...");
+	uhc.scoreboard.init();
+	uhc.scoreboard.heartsInTab(true);
+
+	print("Generating chunks...");
+	uhc.generateWorld(worldDiameter, uhc.interface.draw.progress, mon);
+
+	print("Generating world border...");
+	uhc.generateBorder(worldDiameter, uhc.interface.draw.progress, mon);
 
 	rs.setOutput("left", false);		-- timemonitord/Player Controller
 
 	print("Done!");
-	uhcMessage("Done!");
+	uhc.say("Done!");
+
+	showInterface = true;
 end
 
-function idleScreen()
-	print("Idle Screen running...");
-	local text = "(server)² UHC II"
-	local w, h = mon.getSize();
-	while true do
-		for x=1,#rainbow,1 do
-			mon.clear();
-			mon.setTextScale(1);
-			mon.setTextColor(rainbow[x]);
-			mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-			mon.write(text);
-			commands.exec("gamemode 2 @a[m=0,r=20]");
-			sleep(0.25);
-		end
-	end
-end
-
-function confirmPrompt(s)
-	mon.clear();
-	mon.setTextScale(1);
-
-	local w, h = mon.getSize();
-	mon.setCursorPos(((w / 2) - (#s / 2)) + 1, 5);
-	mon.write(s);
-
-	libtouch.showButton("yes");
-	libtouch.showButton("no");
-
-
-	local res;
-	repeat
-		res = libtouch.getButtonPress();
-	until res
-
-	libtouch.hideButton("yes");
-	libtouch.hideButton("no");
-
-	return res == "yes";
-end
-
-function confirmJoinTeam(team)
-	local res = confirmPrompt("Join " .. string.gsub(team, "^%l", string.upper) .. " Team?");
-	if res then
-		commands.exec("playsound note.pling @p ~ ~ ~ 1000 2 1");
-		commands.exec("scoreboard teams join " .. team .. " @p");
-	else
-		commands.exec("playsound note.pling @p ~ ~ ~ 1000 0.5 1");
-	end
-end
-
-function setTime()
-	print("Resetting difficulty to Peaceful...");
-	commands.exec("difficulty 0");
-	print("Turning off daylight cycle...");
-	commands.exec("gamerule doDaylightCycle false");
-	print("Setting time to noon...");
-	commands.exec("time set 6000");
-	sleep(0.25);
-	print("Resetting difficulty to Hard...");
-	commands.exec("difficulty 3");
-end
-
-function spreadPlayers()
-	print("Spreading players...");
-	commands.exec("spreadplayers 0 0 700 1000 true @a");
-	print("Setting player gamemodes...");
-	commands.exec("gamemode 0 @a");
-	print("Clearing player inventories...");
-	commands.exec("clear @a");
-	print("Giving players potion effects...");
-	commands.exec("effect @a 6 15 10 true");	-- Instant Health
-	commands.exec("effect @a 10 15 10 true");	-- Regeneration
-	commands.exec("effect @a 11 15 10 true");	-- Resistance
-	commands.exec("effect @a 13 45 10 true");	-- Water Breathing
-	commands.exec("effect @a 23 15 10 true");	-- Saturation
-	print("Setting player spawnpoints...");
-	commands.exec("spawnpoint @a 0 151 0");
-	print("Returning players not on a team to spawn room...");
-	commands.exec("tp @a[team=] 0 151 0");
-end
-
-function startCountdown(secondsUntilStart)
-	repeat
-		mon.clear();
-		mon.setTextScale(1);
-		local text = "Starting in " .. secondsUntilStart .. "..."
-		local w, h = mon.getSize();
-		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-		mon.write(text);
-		commands.exec("playsound note.pling @a ~ ~ ~ 1000 1 1");
-		secondsUntilStart = secondsUntilStart - 1
-		sleep(1);
-	until secondsUntilStart < 1
-end
-
-function startGame()
+local function gameStart()
 	print("Starting the game...");
-	showInterface = false;
 
 	print("Starting countdown...");
-	startCountdown(10);
+	uhc.interface.draw.countdown(10, mon);
 	commands.exec("playsound note.pling @a ~ ~ ~ 1000 2 1");
 
-	mon.clear();
-	mon.setTextScale(1);
-	local text = "Game started!"
-	local w, h = mon.getSize();
-	mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
-	mon.write(text);
+	uhc.interface.resetMonitor(mon)
+	uhc.interface.write.center("The game has started!", mon, 1)
 
 	sleep(0.5);
 
-	setTime();
-	spreadPlayers();
+	uhc.gamerule.eternalDayFix(3);
+	uhc.players.spread(worldDiameter, "default", true, true);
+	uhc.players.reset(0);
+	uhc.setSpawn(0, 151, 0);
+	commands.exec("tp @a[team=] 0 151 0");
 
 	rs.setOutput("left", true);			-- timemonitord/Player Controller
 
 	print("The game has started!");
-	uhcMessage("The game has started! No killing in the first 20 minutes!");
+	uhc.say("The game has started! No killing in the first 20 minutes!");
 
-	idleScreen();
+	uhc.interface.idle("(server)² UHC II", mon, "gamemode 2 @a[m=0,r=20]");
 end
 
 init();
 
 while showInterface do
-	mon.clear();
-	mon.setTextScale(1);
+	local startGame = uhc.interface.draw.main(mon, commandBlock);
 
-	local text = "Choose Team To Join";
-	local w, h = mon.getSize();
-	mon.setCursorPos((w / 2) - (#text / 2) + 1, 1);
-	mon.write(text);
-
-	libtouch.showButton("blue");
-	libtouch.showButton("red");
-	libtouch.showButton("green");
-	libtouch.showButton("gold");
-	libtouch.showButton("leave");
-	libtouch.showButton("start");
-
-	local res = libtouch.getButtonPress();
-
-	libtouch.hideButton("blue");
-	libtouch.hideButton("red");
-	libtouch.hideButton("green");
-	libtouch.hideButton("gold");
-	libtouch.showButton("leave");
-	libtouch.showButton("start");
-
-	if res == "leave" then
-		runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1");
-		if confirmPrompt("Leave current team?") then
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 2 1");
-			runCommandBlock("scoreboard teams leave @p");
-		else
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 0.5 1");
-		end
-	elseif res == "start" then
-		runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1");
-		if confirmPrompt("Really start game?") then
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 2 1");
-			startGame();
-		else
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 0.5 1");
-		end
-	elseif res then
-		runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1");
-		confirmJoinTeam(res);
+	if startGame then
+		gameStart();
 	end
 end

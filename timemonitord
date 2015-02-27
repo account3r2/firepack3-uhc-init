@@ -1,12 +1,6 @@
 timer = 0;
 
-function uhcMessageRaw(rawMessage)
-	commands.exec("tellraw @a {\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{\"text\":\"UHC\",\"color\":\"yellow\",\"extra\":[{\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{" .. rawMessage .. "}]}]}]}");
-end
-
-function uhcMessage(message)
-	uhcMessageRaw("\"text\":\"" .. message .. "\",\"color\":\"yellow\"");
-end
+uhc = dofile("libuhccore");
 
 while true do
 	if rs.getInput("right") then
@@ -15,14 +9,15 @@ while true do
 		timer = timer + 5;
 	  
 		if timer % 20 ~= 0 then
-			uhcMessage((20 - (timer % 20)) .. " minutes left in Episode " .. math.ceil(timer / 20));
+			uhc.say((20 - (timer % 20)) .. " minutes left in Episode " .. math.ceil(timer / 20));
 		else
 			commands.exec("playsound fireworks.launch @a ~ ~ ~ 1 1 1");
-			uhcMessage("Episode " .. (timer / 20) .. " has ended!");
+			uhc.say("Episode " .. (timer / 20) .. " has ended!");
 		end
 	else
 		timer = 0;
 		print("Reset timer to 0.");
+		uhc.say("Test");
 		commands.exec("tp @a[m=0] 0 151 0");
 		sleep(0.25);
 		commands.exec("gamemode 2 @a[m=0,r=20]");
