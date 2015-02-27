@@ -91,11 +91,6 @@ function generateWorld(worldSize)
 	generateOn = {};
 	generateOn.x = minx - 16;
 
-	-- if rs.getInput("right") then
-		-- generateOn.x = math.floor((rs.getAnalogueInput("right") * maxx) / 15) - 16;
-		-- print("World generation stopped by user.");
-	-- end
-
 	for x = (rs.getInput("right") and (math.floor((rs.getAnalogueInput("right") * maxx) / 15)) - 16) or 0, maxx, 1 do
 		drawProgress(x, maxx);
 		generateOn.x = generateOn.x + 16;
@@ -114,11 +109,26 @@ function generateWorld(worldSize)
 	generateOn = nil;
 end
 
+function generateBorder(worldSize)
+	print("Generating world border...");
+	local pos1 = "-" .. tostring(math.floor(worldSize / 2)) .. ",0,-" .. tostring(math.floor(worldSize / 2));
+	local pos2 = tostring(math.floor(worldSize / 2)) .. ",255," .. tostring(math.floor(worldSize / 2));
+	for i = 0, 255, 1 do
+		drawProgress(i, 255);
+		if rs.getInput("front") then
+			print("World border generation stopped by user.");
+			return;
+		end
+		commands.exec("//pos1 -" .. tostring(math.floor(worldSize / 2)) .. "," .. i .. ",-" .. tostring(math.floor(worldSize / 2)));
+		commands.exec("//pos2 " .. tostring(math.floor(worldSize / 2)) .. "," .. i .. "," .. tostring(math.floor(worldSize / 2)));
+		commands.exec("//walls minecraft:bedrock");
+		sleep(0.125)
+	end
+end
+
 function init()
 	print("Initializing...");
 	uhcMessage("Initializing UHC... This may take a few minutes.");
-
-	drawProgress(0, 1);
 
 	initTeams();
 	initInterface();
@@ -127,6 +137,12 @@ function init()
 		generateWorld(2000);
 	else
 		print("World generation blocked by user.");
+	end
+
+	if not rs.getInput("front") then
+		generateBorder(2000);
+	else
+		print("World border generation blocked by user.");
 	end
 
 	rs.setOutput("left", false);		-- timemonitord/Player Controller
