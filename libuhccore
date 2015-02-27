@@ -1,0 +1,313 @@
+local uhc = {}
+
+uhc.teams = {}
+uhc.scoreboard = {}
+uhc.gamerule = {}
+uhc.players = {}
+
+function uhc.runCommandBlock(command, device)
+	device.setCommand(command)
+	device.runCommand()
+end
+
+local function booleanConvert(stringOrBoolean)
+	if type(stringOrBoolean) == "string" then
+		if stringOrBoolean == "false" then
+			return false
+		elseif stringOrBoolean == "true" then
+			return true
+		end
+	elseif type(stringOrBoolean) == "boolean" then
+		if not stringOrBoolean then
+			return "false"
+		elseif stringOrBoolean then
+			return "true"
+		end
+	else
+		return
+	end
+end
+
+function uhc.sayRaw(rawMessage, toPlayer)
+	if toPlayer == nil then
+		toPlayer = "@a"
+	end
+
+	commands.exec("tellraw " .. toPlayer .. " {\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{\"text\":\"UHC\",\"color\":\"yellow\",\"extra\":[{\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{" .. rawMessage .. "}]}]}]}")
+end
+
+function uhc.say(message, toPlayer)
+	if toPlayer == nil then
+		toPlayer = "@a"
+	end
+
+	uhc.sayRaw("\"text\":\"" .. message .. "\",\"color\":\"yellow\"", toPlayer)
+end
+
+function uhc.teams.init()
+	commands.exec("scoreboard teams leave @a")
+	commands.exec("scoreboard teams add red")
+	commands.exec("scoreboard teams add green")
+	commands.exec("scoreboard teams add blue")
+	commands.exec("scoreboard teams add gold")
+	commands.exec("scoreboard teams option red color red")
+	commands.exec("scoreboard teams option green color green")
+	commands.exec("scoreboard teams option blue color blue")
+	commands.exec("scoreboard teams option gold color gold")
+end
+
+function uhc.teams.addClosest(team, device)
+	if team ~= nil and team == "red" or team == "green" or team == "blue" or team == "gold" then
+		if device ~= nil then
+			uhc.runCommandBlock("scoreboard teams join " .. team .. " @p", device)
+		else
+			commands.exec("scoreboard teams join " .. team .. " @p")
+		end
+	end
+end
+
+function uhc.teams.removeClosest(device)
+	if device ~= nil then
+		uhc.runCommandBlock("scoreboard teams leave @p", device)
+	else
+		commands.exec("scoreboard teams leave @p")
+	end
+end
+
+function uhc.teams.friendlyFire(value)
+	if value == nil or type(value) ~= "boolean" then
+		value = true
+	end
+
+		commands.exec("scoreboard teams option red friendlyfire " .. booleanConvert(value))
+		commands.exec("scoreboard teams option green friendlyfire " .. booleanConvert(value))
+		commands.exec("scoreboard teams option blue friendlyfire " .. booleanConvert(value))
+		commands.exec("scoreboard teams option gold friendlyfire " .. booleanConvert(value))
+end
+
+function uhc.teams.seeTeamInvisibles(value)
+	if value == nil or type(value) ~= "boolean" then
+		value = true
+	end
+
+	commands.exec("scoreboard teams option red seeFriendlyInvisibles " .. booleanConvert(value))
+	commands.exec("scoreboard teams option green seeFriendlyInvisibles " .. booleanConvert(value))
+	commands.exec("scoreboard teams option blue seeFriendlyInvisibles " .. booleanConvert(value))
+	commands.exec("scoreboard teams option gold seeFriendlyInvisibles " .. booleanConvert(value))
+end
+
+function uhc.teams.seeNametags(value)
+	if value == "team" or value == "hideForOtherTeams" then
+		value = "hideForOtherTeams"
+	elseif value == "enemy" or value == "hideForOwnTeam" then
+		value = "hideForOwnTeam"
+	elseif value == false or value == "false" or value == "never" then 
+		value = "never"
+	else
+		value = "always"
+	end
+	
+	commands.exec("scoreboard teams option red nametagVisibility " .. value)
+	commands.exec("scoreboard teams option green nametagVisibility " .. value)
+	commands.exec("scoreboard teams option blue nametagVisibility " .. value)
+	commands.exec("scoreboard teams option gold nametagVisibility " .. value)
+end
+
+function uhc.scoreboard.init()
+	commands.exec("scoreboard objectives setdisplay sidebar")
+	commands.exec("scoreboard objectives setdisplay list")
+	commands.exec("scoreboard objectives setdisplay belowName")
+	commands.exec("scoreboard objectives add Health health Health")
+end
+
+function uhc.scoreboard.heartsBelowName(value)
+	if value == false or value == "false" then
+		commands.exec("scoreboard objectives setdisplay belowName")
+	else
+		commands.exec("scoreboard objectives setdisplay belowName Health")
+	end
+end
+
+function uhc.scoreboard.heartsInTab(value)
+	if value == false or value == "false" then
+		commands.exec("scoreboard objectives setdisplay list")
+	else
+		commands.exec("scoreboard objectives setdisplay list Health")
+	end
+end
+
+function uhc.scoreboard.heartsOnSidebar(value)
+	if value == false or value == "false" then
+		commands.exec("scoreboard objectives setdisplay sidebar")
+	else
+		commands.exec("scoreboard objectives setdisplay sidebar Health")
+	end
+end
+
+function uhc.gamerule.init()
+	commands.exec("gamerule commandBlockOutput false")
+	commands.exec("gamerule doDaylightCycle false")
+	commands.exec("gamerule naturalRegeneration false")
+end
+
+function uhc.gamerule.eternalDay(value)
+	if value == false or value == "false" then
+		commands.exec("gamerule doDaylightCycle true")
+	else
+		commands.exec("gamerule doDaylightCycle false")
+		commands.exec("time set 6000")
+	end
+end
+
+function uhc.gamerule.eternalDayFix(value)
+		commands.exec("gamerule doDaylightCycle false")
+		commands.exec("time set 6000")
+		uhc.gamerule.difficultyCycle(value)
+end
+
+function uhc.gamerule.eternalNight(value)
+	if value == false or value == "false" then
+		commands.exec("gamerule doDaylightCycle true")
+	else
+		commands.exec("gamerule doDaylightCycle false")
+		commands.exec("time set 18000")
+	end
+end
+
+function uhc.gamerule.difficulty(value)
+	if value == 1 or value == "1" or value == "easy" then
+		commands.exec("difficulty 1")
+	elseif value == 2 or value == "2" or value == "normal" then
+		commands.exec("difficulty 2")
+	elseif value == 3 or value == "3" or value == "hard" then
+		commands.exec("difficulty 3")
+	else
+		commands.exec("difficulty 0")
+	end
+end
+
+function uhc.gamerule.difficultyCycle(value)
+	uhc.gamerule.difficulty(0)
+	sleep(0.25)
+	uhc.gamerule.difficulty(value)
+end
+
+function uhc.generateWorld(worldSize, progressFunction, device)
+	local minx = -math.floor(worldSize / 2)
+	local maxx = math.ceil(worldSize / 16)
+	local minz = -math.floor(worldSize / 2)
+	local maxz = math.ceil(worldSize / 16)
+
+	generateOn = {}
+	generateOn.x = minx - 16
+
+	for x = (rs.getInput("right") and (math.floor((rs.getAnalogueInput("right") * maxx) / 15)) - 16) or 0, maxx, 1 do
+		if progressFunction ~= nil then
+			progressFunction(x, maxx, device)
+		end
+
+		generateOn.x = generateOn.x + 16
+		generateOn.z = minz - 16
+
+		for z = 0, maxz, 1 do
+			if rs.getInput("top") then
+				print("World generation stopped by user.")
+				return
+			end
+
+			generateOn.z = generateOn.z + 16
+
+			local blockInfo = commands.getBlockInfo(generateOn.x, 255, generateOn.z)
+		end
+
+		sleep(0.0125)
+	end
+
+	generateOn = nil
+end
+
+function uhc.generateBorder(worldSize, progressFunction, device)
+	if rs.getInput("front") then
+		print("World border generation blocked by user.")
+		return
+	end
+
+	local pos1 = "-" .. tostring(math.floor(worldSize / 2)) .. ",0,-" .. tostring(math.floor(worldSize / 2))
+	local pos2 = tostring(math.floor(worldSize / 2)) .. ",255," .. tostring(math.floor(worldSize / 2))
+
+	for i = 0, 255, 1 do
+		if progressFunction ~= nil then
+			progressFunction(i, 255, device)
+		end
+
+		if rs.getInput("front") then
+			print("World border generation stopped by user.")
+			return
+		end
+
+		commands.exec("//pos1 -" .. tostring(math.floor(worldSize / 2)) .. "," .. i .. ",-" .. tostring(math.floor(worldSize / 2)))
+		commands.exec("//pos2 " .. tostring(math.floor(worldSize / 2)) .. "," .. i .. "," .. tostring(math.floor(worldSize / 2)))
+		commands.exec("//walls minecraft:bedrock")
+
+		sleep(0.125)
+	end
+end
+
+function uhc.players.spread(worldSize, distance, withTeammates, withEffects)
+	if withTeammates == true or withTeammates == false then
+		withTeammates = booleanConvert(withTeammates)
+	elseif withTeammates ~= "true" or withTeammates ~= "false" then
+		return
+	end
+
+	if type(distance) == "string" and distance == "default" then
+		distance = math.floor(worldSize / 4)
+	elseif type(distance) ~= "number" then
+		return
+	end
+
+	commands.exec("spreadplayers 0 0 " .. distance .. " " .. math.floor(worldSize / 2) .. " " .. withTeammates .. " @a")
+
+	if withEffects ~= nil and withEffects then
+		commands.exec("effect @a 6 15 10 true")		-- Instant Health
+		commands.exec("effect @a 10 15 10 true")	-- Regeneration
+		commands.exec("effect @a 11 15 10 true")	-- Resistance
+		commands.exec("effect @a 23 15 10 true")	-- Saturation
+		commands.exec("effect @a 13 45 10 true")	-- Water Breathing
+	end
+end
+
+function uhc.players.reset(value)
+	if value ~= nil then
+		if value == "survival" or value == "s" or value == "0" or value == 0 then
+			value = 0
+		elseif value == "creative" or value == "c" or value == "1" or value == 1 then
+			value = 1
+		elseif value == "adventure" or value == "a" or value == "2" or value == 2 then
+			value = 2
+		end
+
+		commands.exec("gamemode " .. value .. " @a")
+	end
+
+	commands.exec("clear @a")
+end
+
+function uhc.players.adventure()
+	commands.exec("gamemode 2 @a")
+end
+
+function uhc.players.creative()
+	commands.exec("gamemode 1 @a")
+end
+
+function uhc.players.survival()
+	commands.exec("gamemode 0 @a")
+end
+
+function uhc.setSpawn(x, y, z)
+	commands.exec("setworldspawn " .. x .. " " .. y .. " " .. z)
+	commands.exec("spawnpoint @a " .. x .. " " .. y .. " " .. z)
+end
+
+return uhc
