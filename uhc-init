@@ -68,13 +68,60 @@ function initWorldRules()
 	commands.exec("difficulty 3");
 end
 
+function drawProgress(current, maximum)
+	mon.clear();
+	mon.setTextScale(3);
+
+	local percent = tostring(math.floor(100 * (current / maximum))) .. "%"
+
+	local w, h = mon.getSize();
+	mon.setCursorPos((w / 2) - (#percent / 2) + 1, (h / 2));
+	mon.write(percent);
+end
+
+function generateWorld(worldSize)		-- commands.getBlockInfo(x, y, z) = table blockInfo
+	print("Generating world...");
+
+	local minx = -math.floor(worldSize / 2);
+	local maxx = math.ceil(worldSize / 16);
+	local minz = -math.floor(worldSize / 2);
+	local maxz = math.ceil(worldSize / 16);
+
+	generateOn = {};
+	generateOn.x = minx - 16;
+
+	for x = 0, maxx, 1 do
+		generateOn.x = generateOn.x + 16;
+		generateOn.z = minz - 16;
+		for z = 0, maxz, 1 do
+			if rs.getInput("top") then
+				print("World generation stopped by user.");
+				return;
+			end
+			generateOn.z = generateOn.z + 16;
+			local blockInfo = commands.getBlockInfo(generateOn.x, 255, generateOn.z);
+		end
+		drawProgress(x, maxx);
+		sleep(0.0125);
+	end
+
+	generateOn = nil;
+end
+
 function init()
 	print("Initializing...");
 	uhcMessage("Initializing UHC... This may take a few minutes.");
 
+	drawProgress(0, 1);
+
 	initTeams();
 	initInterface();
 	initWorldRules();
+	if not rs.getInput("top") then
+		generateWorld(2000);
+	else
+		print("World generation blocked by user.");
+	end
 
 	rs.setOutput("left", false);		-- timemonitord/Player Controller
 
@@ -89,6 +136,7 @@ function idleScreen()
 	while true do
 		for x=1,#rainbow,1 do
 			mon.clear();
+			mon.setTextScale(1);
 			mon.setTextColor(rainbow[x]);
 			mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
 			mon.write(text);
@@ -100,6 +148,7 @@ end
 
 function confirmPrompt(s)
 	mon.clear();
+	mon.setTextScale(1);
 
 	local w, h = mon.getSize();
 	mon.setCursorPos(((w / 2) - (#s / 2)) + 1, 5);
@@ -116,8 +165,6 @@ function confirmPrompt(s)
 
 	libtouch.hideButton("yes");
 	libtouch.hideButton("no");
-
-	mon.clear();
 
 	return res == "yes";
 end
@@ -166,6 +213,7 @@ end
 function startCountdown(secondsUntilStart)
 	repeat
 		mon.clear();
+		mon.setTextScale(1);
 		local text = "Starting in " .. secondsUntilStart .. "..."
 		local w, h = mon.getSize();
 		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
@@ -185,6 +233,7 @@ function startGame()
 	commands.exec("playsound note.pling @a ~ ~ ~ 1000 2 1");
 
 	mon.clear();
+	mon.setTextScale(1);
 	local text = "Game started!"
 	local w, h = mon.getSize();
 	mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
@@ -207,6 +256,7 @@ init();
 
 while showInterface do
 	mon.clear();
+	mon.setTextScale(1);
 
 	local text = "Choose Team To Join";
 	local w, h = mon.getSize();
