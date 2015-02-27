@@ -1,28 +1,31 @@
-local cmd = peripheral.find("command");
-
-function run_command(c)
-	cmd.setCommand(c);
-	cmd.runCommand();
-end
-
 timer = 0;
 
+function uhcMessageRaw(rawMessage)
+	commands.exec("tellraw @a {\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{\"text\":\"UHC\",\"color\":\"yellow\",\"extra\":[{\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{" .. rawMessage .. "}]}]}]}");
+end
+
+function uhcMessage(message)
+	uhcMessageRaw("\"text\":\"" .. message .. "\",\"color\":\"yellow\"");
+end
+
 while true do
-	while rs.getInput("top") do
-		print("New iteration. Timer is at " .. timer .. " minutes.");
+	if rs.getInput("left") then
+		print("Timer is at " .. timer .. " minutes.");
 		sleep(5 * 60);
 		timer = timer + 5;
 	  
 		if timer % 20 ~= 0 then
-			run_command("say " .. (20 - (timer % 20)) .. " minutes left in Episode " .. math.ceil(timer / 20));
+			uhcMessage((20 - (timer % 20)) .. " minutes left in Episode " .. math.ceil(timer / 20));
 		else
-			run_command("playsound fireworks.launch @a ~ ~ ~ 1 1 1");
-			run_command("say Episode " .. (timer / 20) .. " has ended!");
+			commands.exec("playsound fireworks.launch @a ~ ~ ~ 1 1 1");
+			uhcMessage("Episode " .. (timer / 20) .. " has ended!");
 		end
-	end
-	if not rs.getInput("top") then
+	else
 		timer = 0;
 		print("Reset timer to 0.");
-		sleep(0.5);
+		commands.exec("tp @a[m=0] 0 151 0");
+		sleep(0.25);
+		commands.exec("gamemode 2 @a[m=0,r=20]");
+		sleep(0.25);
 	end
 end
