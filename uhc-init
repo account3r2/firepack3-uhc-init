@@ -1,3 +1,5 @@
+worldDiameter = 4000;
+
 local commandBlock = peripheral.find("command");
 
 function runCommandBlock(string)
@@ -134,13 +136,13 @@ function init()
 	initInterface();
 	initWorldRules();
 	if not rs.getInput("top") then
-		generateWorld(2000);
+		generateWorld(worldDiameter);
 	else
 		print("World generation blocked by user.");
 	end
 
 	if not rs.getInput("front") then
-		generateBorder(2000);
+		generateBorder(worldDiameter);
 	else
 		print("World border generation blocked by user.");
 	end
