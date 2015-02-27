@@ -17,7 +17,6 @@ while true do
 	else
 		timer = 0;
 		print("Reset timer to 0.");
-		uhc.say("Test");
 		commands.exec("tp @a[m=0] 0 151 0");
 		sleep(0.25);
 		commands.exec("gamemode 2 @a[m=0,r=20]");

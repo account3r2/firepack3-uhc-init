@@ -77,4 +77,6 @@ while showInterface do
 	if startGame then
 		gameStart();
 	end
+
+	rs.setOutput("left", false);
 end
