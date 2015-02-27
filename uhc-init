@@ -19,14 +19,9 @@ end
 
 rainbow = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green, colors.cyan, colors.lightBlue, colors.blue, colors.purple, colors.magenta, colors.pink}
 
-function init()
-	uhcMessage("Initializing UHC... This may take a few minutes.");
-	commands.exec("gamerule commandBlockOutput false");
-	commands.exec("gamerule doDaylightCycle false");
-	commands.exec("setworldspawn 0 151 0");
-	rs.setOutput("left", false)
-	commands.exec("time set 18000");
-	commands.exec("difficulty 3");
+function initTeams()
+	print("Initializing teams...");
+	commands.exec("scoreboard teams leave @a");
 	commands.exec("scoreboard teams add red");
 	commands.exec("scoreboard teams add green");
 	commands.exec("scoreboard teams add blue");
@@ -48,6 +43,10 @@ function init()
 	commands.exec("scoreboard objectives setdisplay belowName");
 	commands.exec("scoreboard objectives add Health health Health");
 	commands.exec("scoreboard objectives setdisplay list Health");
+end
+
+function initInterface()
+	print("Initializing the interface...");
 	libtouch.registerMonitor(mon);
 	libtouch.addButton(9, 3, 3, colors.blue, colors.lightBlue, "Blue", "blue");
 	libtouch.addButton(9, 7, 3, colors.red, colors.pink, "Red", "red");
@@ -57,10 +56,34 @@ function init()
 	libtouch.addButton(23, 12, 1, colors.green, colors.lime, "Start", "start");
 	libtouch.addButton(10, 7, 3, colors.green, colors.lime, "Yes", "yes");
 	libtouch.addButton(16, 7, 3, colors.red, colors.pink, "No ", "no");
-	showInterface = true
+	showInterface = true;
+end
+
+function initWorldRules()
+	print("Initializing gamerules...");
+	commands.exec("gamerule commandBlockOutput false");
+	commands.exec("gamerule doDaylightCycle false");
+	commands.exec("setworldspawn 0 151 0");
+	commands.exec("time set 18000");
+	commands.exec("difficulty 3");
+end
+
+function init()
+	print("Initializing...");
+	uhcMessage("Initializing UHC... This may take a few minutes.");
+
+	initTeams();
+	initInterface();
+	initWorldRules();
+
+	rs.setOutput("left", false);		-- timemonitord/Player Controller
+
+	print("Done!");
+	uhcMessage("Done!");
 end
 
 function idleScreen()
+	print("Idle Screen running...");
 	local text = "(server)² UHC II"
 	local w, h = mon.getSize();
 	while true do
@@ -110,20 +133,37 @@ function confirmJoinTeam(team)
 end
 
 function setTime()
+	print("Resetting difficulty to Peaceful...");
 	commands.exec("difficulty 0");
+	print("Turning off daylight cycle...");
 	commands.exec("gamerule doDaylightCycle false");
+	print("Setting time to noon...");
 	commands.exec("time set 6000");
 	sleep(0.25);
+	print("Resetting difficulty to Hard...");
 	commands.exec("difficulty 3");
 end
 
 function spreadPlayers()
+	print("Spreading players...");
 	commands.exec("spreadplayers 0 0 700 1000 true @a");
+	print("Setting player gamemodes...");
+	commands.exec("gamemode 0 @a");
+	print("Clearing player inventories...");
+	commands.exec("clear @a");
+	print("Giving players potion effects...");
+	commands.exec("effect @a 6 15 10 true");	-- Instant Health
+	commands.exec("effect @a 10 15 10 true");	-- Regeneration
+	commands.exec("effect @a 11 15 10 true");	-- Resistance
+	commands.exec("effect @a 13 45 10 true");	-- Water Breathing
+	commands.exec("effect @a 23 15 10 true");	-- Saturation
+	print("Setting player spawnpoints...");
+	commands.exec("spawnpoint @a 0 151 0");
+	print("Returning players not on a team to spawn room...");
+	commands.exec("tp @a[team=] 0 151 0");
 end
 
-function startGame()
-	showInterface = false;
-	secondsUntilStart = 10;
+function startCountdown(secondsUntilStart)
 	repeat
 		mon.clear();
 		local text = "Starting in " .. secondsUntilStart .. "..."
@@ -134,26 +174,32 @@ function startGame()
 		secondsUntilStart = secondsUntilStart - 1
 		sleep(1);
 	until secondsUntilStart < 1
+end
+
+function startGame()
+	print("Starting the game...");
+	showInterface = false;
+
+	print("Starting countdown...");
+	startCountdown(10);
 	commands.exec("playsound note.pling @a ~ ~ ~ 1 2 1");
+
 	mon.clear();
 	local text = "Game started!"
 	local w, h = mon.getSize();
 	mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
 	mon.write(text);
-	sleep(0.5)
+
+	sleep(0.5);
+
 	setTime();
 	spreadPlayers();
-	commands.exec("gamemode 0 @a");
-	commands.exec("clear @a");
-	commands.exec("effect @a 6 15 10 true");	-- Instant Health
-	commands.exec("effect @a 10 15 10 true");	-- Regeneration
-	commands.exec("effect @a 11 15 10 true");	-- Resistance
-	commands.exec("effect @a 13 45 10 true");	-- Water Breathing
-	commands.exec("effect @a 23 15 10 true");	-- Saturation
-	rs.setOutput("left", true);
+
+	rs.setOutput("left", true);			-- timemonitord/Player Controller
+
+	print("The game has started!");
 	uhcMessage("The game has started! No killing in the first 20 minutes!");
-	commands.exec("spawnpoint @a 0 151 0");
-	commands.exec("tp @a[team=] 0 151 0");
+
 	idleScreen();
 end
 
