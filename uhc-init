@@ -125,10 +125,10 @@ end
 function confirmJoinTeam(team)
 	local res = confirmPrompt("Join " .. string.gsub(team, "^%l", string.upper) .. " Team?");
 	if res then
-		commands.exec("playsound note.pling @p ~ ~ ~ 1 2 1");
+		commands.exec("playsound note.pling @p ~ ~ ~ 1000 2 1");
 		commands.exec("scoreboard teams join " .. team .. " @p");
 	else
-		commands.exec("playsound note.pling @p ~ ~ ~ 1 0.5 1");
+		commands.exec("playsound note.pling @p ~ ~ ~ 1000 0.5 1");
 	end
 end
 
@@ -170,7 +170,7 @@ function startCountdown(secondsUntilStart)
 		local w, h = mon.getSize();
 		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
 		mon.write(text);
-		commands.exec("playsound note.pling @a ~ ~ ~ 1 1 1");
+		commands.exec("playsound note.pling @a ~ ~ ~ 1000 1 1");
 		secondsUntilStart = secondsUntilStart - 1
 		sleep(1);
 	until secondsUntilStart < 1
@@ -182,7 +182,7 @@ function startGame()
 
 	print("Starting countdown...");
 	startCountdown(10);
-	commands.exec("playsound note.pling @a ~ ~ ~ 1 2 1");
+	commands.exec("playsound note.pling @a ~ ~ ~ 1000 2 1");
 
 	mon.clear();
 	local text = "Game started!"
@@ -230,23 +230,23 @@ while showInterface do
 	libtouch.showButton("start");
 
 	if res == "leave" then
-		runCommandBlock("playsound note.pling @p ~ ~ ~ 1 1 1");
+		runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1");
 		if confirmPrompt("Leave current team?") then
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 2 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 2 1");
 			runCommandBlock("scoreboard teams leave @p");
 		else
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 0.5 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 0.5 1");
 		end
 	elseif res == "start" then
-		runCommandBlock("playsound note.pling @p ~ ~ ~ 1 1 1");
+		runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1");
 		if confirmPrompt("Really start game?") then
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 2 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 2 1");
 			startGame();
 		else
-			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 0.5 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 0.5 1");
 		end
 	elseif res then
-		runCommandBlock("playsound note.pling @p ~ ~ ~ 1 1 1");
+		runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1");
 		confirmJoinTeam(res);
 	end
 end
