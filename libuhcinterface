@@ -1,0 +1,153 @@
+os.loadAPI("libtouch");
+
+local uhc = dofile("libuhccore")
+
+local uhcinterface = {}
+
+uhcinterface.rainbow = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green, colors.cyan, colors.lightBlue, colors.blue, colors.purple, colors.magenta, colors.pink}
+uhcinterface.draw = {}
+uhcinterface.write = {}
+
+function uhcinterface.init(device)
+	libtouch.registerMonitor(device)
+	libtouch.addButton(9, 3, 3, colors.blue, colors.lightBlue, "Blue", "blue")
+	libtouch.addButton(9, 7, 3, colors.red, colors.pink, "Red", "red")
+	libtouch.addButton(16, 3, 3, colors.yellow, colors.white, "Gold", "gold")
+	libtouch.addButton(15, 7, 3, colors.green, colors.lime, "Green", "green")
+	libtouch.addButton(1, 12, 1, colors.gray, colors.lightGray, "Leave", "leave")
+	libtouch.addButton(23, 12, 1, colors.green, colors.lime, "Start", "start")
+	libtouch.addButton(10, 7, 3, colors.green, colors.lime, "Yes", "yes")
+	libtouch.addButton(16, 7, 3, colors.red, colors.pink, "No ", "no")
+end
+
+function uhcinterface.draw.main(device, device2)
+	uhcinterface.resetMonitor(device)
+
+	local text = "Choose Team To Join"
+	local w, h = device.getSize()
+	device.setCursorPos((w / 2) - (#text / 2) + 1, 1)
+	device.write(text)
+
+	libtouch.showButton("blue")
+	libtouch.showButton("red")
+	libtouch.showButton("green")
+	libtouch.showButton("gold")
+	libtouch.showButton("leave")
+	libtouch.showButton("start")
+
+	local res = libtouch.getButtonPress()
+
+	libtouch.hideButton("blue")
+	libtouch.hideButton("red")
+	libtouch.hideButton("green")
+	libtouch.hideButton("gold")
+	libtouch.showButton("leave")
+	libtouch.showButton("start")
+
+	if res == "leave" then
+		if uhcinterface.draw.confirm("Leave current team?", device, device2) then
+			uhc.teams.removeClosest(device2)
+		end
+	elseif res == "start" then
+		if uhcinterface.draw.confirm("Really start game?", device, device2) then
+			return true
+		end
+	elseif res then
+		if uhcinterface.draw.confirm("Join " .. string.gsub(res, "^%l", string.upper) .. " Team?", device, device2) then
+			uhc.teams.addClosest(res, device2)
+		end
+	end
+
+	return false
+end
+
+function uhcinterface.draw.progress(current, maximum, device)
+	uhcinterface.resetMonitor(device)
+	device.setTextScale(3)
+
+	local percent = tostring(math.floor(100 * (current / maximum))) .. "%"
+
+	local w, h = device.getSize()
+	device.setCursorPos((w / 2) - (#percent / 2) + 1, (h / 2))
+	device.write(percent)
+end
+
+function uhcinterface.draw.confirm(text, device, device2)
+	uhc.runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 1 1", device2)
+
+	uhcinterface.resetMonitor(device)
+
+	local w, h = device.getSize()
+	device.setCursorPos(((w / 2) - (#text / 2)) + 1, 5)
+	device.write(text)
+
+	libtouch.showButton("yes")
+	libtouch.showButton("no")
+
+	local res
+	repeat
+		res = libtouch.getButtonPress()
+	until res
+
+	libtouch.hideButton("yes")
+	libtouch.hideButton("no")
+
+	if res == "yes" then
+		uhc.runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 2 1", device2)
+		return true
+	else
+		uhc.runCommandBlock("playsound note.pling @p ~ ~ ~ 1000 0.5 1", device2)
+		return false
+	end
+end
+
+function uhcinterface.draw.countdown(secondsUntilStart, device)
+	repeat
+		uhcinterface.resetMonitor(device)
+		uhcinterface.write.center("Starting in " .. secondsUntilStart .. "...", device, 1)
+		commands.exec("playsound note.pling @a ~ ~ ~ 1000 1 1")
+		secondsUntilStart = secondsUntilStart - 1
+		sleep(1)
+	until secondsUntilStart < 1
+end
+
+function uhcinterface.write.center(text, device, scale)
+	if scale then
+		device.setTextScale(scale)
+	end
+	local w, h = device.getSize()
+	device.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2))
+	device.write(text)
+end
+
+function uhcinterface.resetMonitor(device)
+	device.clear()
+	device.setTextScale(1)
+	device.setTextColor(colors.white)
+	device.setCursorPos(1, 1)
+end
+
+function uhcinterface.idle(text, device, commandOnIdle)
+	uhcinterface.resetMonitor(device)
+	local w, h = device.getSize()
+	while true do
+		for i = 1, #uhcinterface.rainbow, 1 do
+			uhcinterface.resetMonitor(device)
+			device.setTextColor(uhcinterface.rainbow[i])
+			device.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2))
+			device.write(text)
+
+			if commandOnIdle ~= nil then
+				commands.exec(commandOnIdle)
+			end
+
+			if rs.getInput("right") then
+				return
+			end
+
+			sleep(0.25)
+		end
+	end
+end
+
+return uhcinterface
