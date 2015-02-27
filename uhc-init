@@ -1,4 +1,4 @@
-local worldDiameter = 4000;
+local worldDiameter = 2000;
 
 local uhc = dofile("libuhccore");
 uhc.interface = dofile("libuhcinterface");
