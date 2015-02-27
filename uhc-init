@@ -69,6 +69,7 @@ function idleScreen()
 			mon.setTextColor(rainbow[x]);
 			mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
 			mon.write(text);
+			commands.exec("gamemode 2 @a[m=0,r=20]");
 			sleep(0.25);
 		end
 	end
@@ -140,8 +141,6 @@ function startGame()
 	mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
 	mon.write(text);
 	sleep(0.5)
-	rs.setOutput("right", true);
-	rs.setOutput("left", true);
 	setTime();
 	spreadPlayers();
 	commands.exec("gamemode 0 @a");
@@ -151,6 +150,7 @@ function startGame()
 	commands.exec("effect @a 11 15 10 true");	-- Resistance
 	commands.exec("effect @a 13 45 10 true");	-- Water Breathing
 	commands.exec("effect @a 23 15 10 true");	-- Saturation
+	rs.setOutput("left", true);
 	uhcMessage("The game has started! No killing in the first 20 minutes!");
 	commands.exec("spawnpoint @a 0 151 0");
 	commands.exec("tp @a[team=] 0 151 0");
