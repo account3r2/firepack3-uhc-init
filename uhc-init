@@ -1,6 +1,6 @@
 local commandBlock = peripheral.find("command");
 
-function runCommand(string)
+function runCommandBlock(string)
 	commandBlock.setCommand(string);
 	commandBlock.runCommand();
 end
@@ -9,37 +9,45 @@ os.loadAPI("libtouch");
 
 local mon = peripheral.find("monitor");
 
+function uhcMessageRaw(rawMessage)
+	commands.exec("tellraw @a {\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{\"text\":\"UHC\",\"color\":\"yellow\",\"extra\":[{\"text\":\" | \",\"color\":\"dark_purple\",\"extra\":[{" .. rawMessage .. "}]}]}]}");
+end
+
+function uhcMessage(message)
+	uhcMessageRaw("\"text\":\"" .. message .. "\",\"color\":\"yellow\"");
+end
+
 rainbow = {colors.red, colors.orange, colors.yellow, colors.lime, colors.green, colors.cyan, colors.lightBlue, colors.blue, colors.purple, colors.magenta, colors.pink}
 
 function init()
-	runCommand("gamerule commandBlockOutput false");
-	runCommand("setworldspawn 0 151 0");
-	rs.setOutput("right", false)
+	uhcMessage("Initializing UHC... This may take a few minutes.");
+	commands.exec("gamerule commandBlockOutput false");
+	commands.exec("gamerule doDaylightCycle false");
+	commands.exec("setworldspawn 0 151 0");
 	rs.setOutput("left", false)
-	runCommand("time set 18000");
-	runCommand("difficulty 3");
-	runCommand("scoreboard teams add red");
-	runCommand("scoreboard teams add green");
-	runCommand("scoreboard teams add blue");
-	runCommand("scoreboard teams add gold");
-	runCommand("scoreboard teams option red friendlyfire false");
-	runCommand("scoreboard teams option green friendlyfire false");
-	runCommand("scoreboard teams option blue friendlyfire false");
-	runCommand("scoreboard teams option gold friendlyfire false");
-	runCommand("scoreboard teams option red color red");
-	runCommand("scoreboard teams option green color green");
-	runCommand("scoreboard teams option blue color blue");
-	runCommand("scoreboard teams option gold color gold");
-	runCommand("scoreboard teams option red seeFriendlyInvisibles true");
-	runCommand("scoreboard teams option green seeFriendlyInvisibles true");
-	runCommand("scoreboard teams option blue seeFriendlyInvisibles true");
-	runCommand("scoreboard teams option gold seeFriendlyInvisibles true");
-	runCommand("scoreboard objectives setdisplay sidebar");
-	runCommand("scoreboard objectives setdisplay list");
-	runCommand("scoreboard objectives setdisplay belowName");
-	runCommand("scoreboard objectives add Health health Health");
-	runCommand("scoreboard objectives setdisplay list Health");
-	showInterface = true
+	commands.exec("time set 18000");
+	commands.exec("difficulty 3");
+	commands.exec("scoreboard teams add red");
+	commands.exec("scoreboard teams add green");
+	commands.exec("scoreboard teams add blue");
+	commands.exec("scoreboard teams add gold");
+	commands.exec("scoreboard teams option red friendlyfire false");
+	commands.exec("scoreboard teams option green friendlyfire false");
+	commands.exec("scoreboard teams option blue friendlyfire false");
+	commands.exec("scoreboard teams option gold friendlyfire false");
+	commands.exec("scoreboard teams option red color red");
+	commands.exec("scoreboard teams option green color green");
+	commands.exec("scoreboard teams option blue color blue");
+	commands.exec("scoreboard teams option gold color gold");
+	commands.exec("scoreboard teams option red seeFriendlyInvisibles true");
+	commands.exec("scoreboard teams option green seeFriendlyInvisibles true");
+	commands.exec("scoreboard teams option blue seeFriendlyInvisibles true");
+	commands.exec("scoreboard teams option gold seeFriendlyInvisibles true");
+	commands.exec("scoreboard objectives setdisplay sidebar");
+	commands.exec("scoreboard objectives setdisplay list");
+	commands.exec("scoreboard objectives setdisplay belowName");
+	commands.exec("scoreboard objectives add Health health Health");
+	commands.exec("scoreboard objectives setdisplay list Health");
 	libtouch.registerMonitor(mon);
 	libtouch.addButton(9, 3, 3, colors.blue, colors.lightBlue, "Blue", "blue");
 	libtouch.addButton(9, 7, 3, colors.red, colors.pink, "Red", "red");
@@ -49,6 +57,7 @@ function init()
 	libtouch.addButton(23, 12, 1, colors.green, colors.lime, "Start", "start");
 	libtouch.addButton(10, 7, 3, colors.green, colors.lime, "Yes", "yes");
 	libtouch.addButton(16, 7, 3, colors.red, colors.pink, "No ", "no");
+	showInterface = true
 end
 
 function idleScreen()
@@ -92,22 +101,23 @@ end
 function confirmJoinTeam(team)
 	local res = confirmPrompt("Join " .. string.gsub(team, "^%l", string.upper) .. " Team?");
 	if res then
-		runCommand("playsound note.pling @p ~ ~ ~ 1 2 1");
-		runCommand("scoreboard teams join " .. team .. " @p");
+		commands.exec("playsound note.pling @p ~ ~ ~ 1 2 1");
+		commands.exec("scoreboard teams join " .. team .. " @p");
 	else
-		runCommand("playsound note.pling @p ~ ~ ~ 1 0.5 1");
+		commands.exec("playsound note.pling @p ~ ~ ~ 1 0.5 1");
 	end
 end
 
 function setTime()
-	runCommand("difficulty 0");
-	runCommand("gamerule doDaylightCycle false");
-	runCommand("time set 6000");
-	runCommand("difficulty 3");
+	commands.exec("difficulty 0");
+	commands.exec("gamerule doDaylightCycle false");
+	commands.exec("time set 6000");
+	sleep(0.25);
+	commands.exec("difficulty 3");
 end
 
 function spreadPlayers()
-	runCommand("spreadplayers 0 0 700 1000 true @a");
+	commands.exec("spreadplayers 0 0 700 1000 true @a");
 end
 
 function startGame()
@@ -119,11 +129,11 @@ function startGame()
 		local w, h = mon.getSize();
 		mon.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2));
 		mon.write(text);
-		runCommand("playsound note.pling @a ~ ~ ~ 1 1 1");
+		commands.exec("playsound note.pling @a ~ ~ ~ 1 1 1");
 		secondsUntilStart = secondsUntilStart - 1
 		sleep(1);
 	until secondsUntilStart < 1
-	runCommand("playsound note.pling @a ~ ~ ~ 1 2 1");
+	commands.exec("playsound note.pling @a ~ ~ ~ 1 2 1");
 	mon.clear();
 	local text = "Game started!"
 	local w, h = mon.getSize();
@@ -134,16 +144,16 @@ function startGame()
 	rs.setOutput("left", true);
 	setTime();
 	spreadPlayers();
-	runCommand("gamemode 0 @a");
-	runCommand("clear @a");
-	runCommand("effect @a 6 15 10 true");	-- Instant Health
-	runCommand("effect @a 10 15 10 true");	-- Regeneration
-	runCommand("effect @a 11 15 10 true");	-- Resistance
-	runCommand("effect @a 13 45 10 true");	-- Water Breating
-	runCommand("effect @a 23 15 10 true");	-- Saturation 
-	runCommand("say The game has started! No killing in the first 20 minutes!");
-	runCommand("spawnpoint @a 0 151 0");
-	runCommand("tp @a[team=] 0 151 0");
+	commands.exec("gamemode 0 @a");
+	commands.exec("clear @a");
+	commands.exec("effect @a 6 15 10 true");	-- Instant Health
+	commands.exec("effect @a 10 15 10 true");	-- Regeneration
+	commands.exec("effect @a 11 15 10 true");	-- Resistance
+	commands.exec("effect @a 13 45 10 true");	-- Water Breathing
+	commands.exec("effect @a 23 15 10 true");	-- Saturation
+	uhcMessage("The game has started! No killing in the first 20 minutes!");
+	commands.exec("spawnpoint @a 0 151 0");
+	commands.exec("tp @a[team=] 0 151 0");
 	idleScreen();
 end
 
@@ -174,23 +184,23 @@ while showInterface do
 	libtouch.showButton("start");
 
 	if res == "leave" then
-		runCommand("playsound note.pling @p ~ ~ ~ 1 1 1");
+		runCommandBlock("playsound note.pling @p ~ ~ ~ 1 1 1");
 		if confirmPrompt("Leave current team?") then
-			runCommand("playsound note.pling @p ~ ~ ~ 1 2 1");
-			runCommand("scoreboard teams leave @p");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 2 1");
+			runCommandBlock("scoreboard teams leave @p");
 		else
-			runCommand("playsound note.pling @p ~ ~ ~ 1 0.5 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 0.5 1");
 		end
 	elseif res == "start" then
-		runCommand("playsound note.pling @p ~ ~ ~ 1 1 1");
+		runCommandBlock("playsound note.pling @p ~ ~ ~ 1 1 1");
 		if confirmPrompt("Really start game?") then
-			runCommand("playsound note.pling @p ~ ~ ~ 1 2 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 2 1");
 			startGame();
 		else
-			runCommand("playsound note.pling @p ~ ~ ~ 1 0.5 1");
+			runCommandBlock("playsound note.pling @p ~ ~ ~ 1 0.5 1");
 		end
 	elseif res then
-		runCommand("playsound note.pling @p ~ ~ ~ 1 1 1");
+		runCommandBlock("playsound note.pling @p ~ ~ ~ 1 1 1");
 		confirmJoinTeam(res);
 	end
 end
