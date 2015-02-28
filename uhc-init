@@ -15,26 +15,36 @@ local function init()
 
 	print("Initializing gamerules...");
 	uhc.gamerule.init();
+	print(" * Enabling Eternal Night...");
 	uhc.gamerule.eternalNight(true);
+	print(" * Setting difficulty to Hard...");
 	uhc.gamerule.difficultyCycle(3);
+	print(" * Setting world spawn...");
 	uhc.setSpawn(0, 151, 0);
 
 	print("Initializing teams...");
 	uhc.teams.init();
+	print(" * Disabling Friendly Fire...");
 	uhc.teams.friendlyFire(false);
+	print(" * Enabling visible invisible teammates...");
 	uhc.teams.seeTeamInvisibles(true);
+	print(" * Enabling nametags...");
 	uhc.teams.seeNametags(true);
 
 	print("Initializing scoreboard...");
 	uhc.scoreboard.init();
+	print(" * Enabling hearts in tab...");
 	uhc.scoreboard.heartsInTab(true);
 
 	print("Generating chunks...");
+	print(" * Progress will be shown on the attached monitor.");
 	uhc.generateWorld(worldDiameter, uhc.interface.draw.progress, mon);
 
 	print("Generating world border...");
+	print(" * Progress will be shown on the attached monitor.");
 	uhc.generateBorder(worldDiameter, uhc.interface.draw.progress, mon);
 
+	print("Disabling timemonitord...");
 	rs.setOutput("left", false);		-- timemonitord/Player Controller
 
 	print("Done!");
@@ -46,7 +56,7 @@ end
 local function gameStart()
 	print("Starting the game...");
 
-	print("Starting countdown...");
+	print(" * Starting countdown...");
 	uhc.interface.draw.countdown(10, mon);
 	commands.exec("playsound note.pling @a ~ ~ ~ 1000 2 1");
 
@@ -55,12 +65,18 @@ local function gameStart()
 
 	sleep(0.5);
 
+	print(" * Resetting difficulty and enabling eternal day...");
 	uhc.gamerule.eternalDayFix(3);
+	print(" * Spreading players and giving positive potion effects...");
 	uhc.players.spread(worldDiameter, "default", true, true);
+	print(" * Clearing all player inventories and resetting gamemode...");
 	uhc.players.reset(0);
+	print(" * Resetting world and player spawn points...");
 	uhc.setSpawn(0, 151, 0);
+	print(" * Teleporing back any players that are not on a team...");
 	commands.exec("tp @a[team=] 0 151 0");
 
+	print(" * Enabling timemonitord...");
 	rs.setOutput("left", true);			-- timemonitord/Player Controller
 
 	print("The game has started!");
@@ -79,4 +95,16 @@ while showInterface do
 	end
 
 	rs.setOutput("left", false);
+
+	print("Resetting settings...");
+	print(" * Enabling Eternal Night...");
+	uhc.gamerule.eternalNight(true);
+	print(" * Setting difficulty to Hard...");
+	uhc.gamerule.difficultyCycle(3);
+	print(" * Setting world spawn...");
+	uhc.setSpawn(0, 151, 0);
+
+	print("Initializing teams...");
+	uhc.teams.init();
+	print("Done!");
 end
