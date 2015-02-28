@@ -40,9 +40,11 @@ local function init()
 	print(" * Progress will be shown on the attached monitor.");
 	uhc.generateWorld(worldDiameter, uhc.interface.draw.progress, mon);
 
-	print("Generating world border...");
-	print(" * Progress will be shown on the attached monitor.");
-	uhc.generateBorder(worldDiameter, uhc.interface.draw.progress, mon);
+	print("Prompting user to generate world border...");
+	uhc.generateBorder(worldDiameter);
+	repeat
+		local complete = uhcinterface.draw.confirm("Have you entered the commands?", mon, commandBlock);
+	until complete
 
 	print("Disabling timemonitord...");
 	rs.setOutput("left", false);		-- timemonitord/Player Controller
