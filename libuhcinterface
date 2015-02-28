@@ -127,7 +127,7 @@ function uhcinterface.resetMonitor(device)
 	device.setCursorPos(1, 1)
 end
 
-function uhcinterface.idle(text, device, commandOnIdle)
+function uhcinterface.idle(text, device)
 	uhcinterface.resetMonitor(device)
 	local w, h = device.getSize()
 	while true do
@@ -137,9 +137,8 @@ function uhcinterface.idle(text, device, commandOnIdle)
 			device.setCursorPos((w / 2) - (#text / 2) + 1, (h / 2))
 			device.write(text)
 
-			if commandOnIdle ~= nil then
-				commands.exec(commandOnIdle)
-			end
+			commands.exec("gamemode 2 @a[m=0,r=20]")
+			commands.exec("scoreboard teams leave @a[m=2,r=20]")
 
 			if rs.getInput("right") then
 				return
