@@ -43,7 +43,7 @@ local function init()
 	print("Prompting user to generate world border...");
 	uhc.generateBorder(worldDiameter);
 	repeat
-		local complete = uhcinterface.draw.confirm("Have you entered the commands?", mon, commandBlock);
+		local complete = uhc.interface.draw.confirm("Have you run the commands?", mon, commandBlock);
 	until complete
 
 	print("Disabling timemonitord...");
