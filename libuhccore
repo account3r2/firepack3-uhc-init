@@ -235,9 +235,9 @@ function uhc.generateBorder(worldSize, progressFunction, device)
 	local pos1 = "-" .. tostring(math.floor(worldSize / 2)) .. ",0,-" .. tostring(math.floor(worldSize / 2))
 	local pos2 = tostring(math.floor(worldSize / 2)) .. ",255," .. tostring(math.floor(worldSize / 2))
 
-	for i = 0, 255, 1 do
+	for i = 0, 254, 1 do
 		if progressFunction ~= nil then
-			progressFunction(i, 255, device)
+			progressFunction(i, 254, device)
 		end
 
 		if rs.getInput("front") then
@@ -246,7 +246,7 @@ function uhc.generateBorder(worldSize, progressFunction, device)
 		end
 
 		commands.exec("//pos1 -" .. tostring(math.floor(worldSize / 2)) .. "," .. i .. ",-" .. tostring(math.floor(worldSize / 2)))
-		commands.exec("//pos2 " .. tostring(math.floor(worldSize / 2)) .. "," .. i .. "," .. tostring(math.floor(worldSize / 2)))
+		commands.exec("//pos2 " .. tostring(math.floor(worldSize / 2)) .. "," .. i + 1 .. "," .. tostring(math.floor(worldSize / 2)))
 		commands.exec("//walls minecraft:bedrock")
 
 		sleep(0.125)
